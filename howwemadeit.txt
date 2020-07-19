@@ -1,0 +1,61 @@
+mkdir sslconf
+cd sslconf/
+cp /opt/local/etc/openssl/openssl.cnf .
+mkdir certs
+mkdir crl
+mkdir newcerts
+echo "01" > serial
+cp /dev/null index.txt
+mkdir private
+openssl genrsa -des3 -out private/cakey.key 4096
+openssl req -new -x509 -nodes -sha1 -days 1825 -key private/cakey.pem -out cacert.pem
+openssl req -new -x509 -nodes -sha1 -days 1825 -key private/cakey.key -out cacert.pem
+ls
+cat cacert.pem 
+ls
+ls certs/
+cd private
+ls
+cp cakey.key cakey.pem
+cd ..
+ls
+ls
+cd ..
+ls
+mv sslconf/ CA
+mkdir IMCA
+cd IMCA/
+cp ../CA/openssl.cnf .
+mkdir certs crl newcerts private
+echo "01" > serial
+cp /dev/null index.txt
+openssl genrsa -des3 -out private/cakey.pem 4096
+openssl req -new -sha1 -key private/cakey.pem -out imca.csr
+cp imca.csr ../CA/
+cd ../CA/
+openssl ca -extensions v3_ca -days 365 -out imca.crt -in imca.csr 
+mate openssl.cnf 
+openssl ca -extensions v3_ca -days 365 -out imca.crt -in imca.csr -config openssl.cnf 
+cd ../IMCA/
+openssl ca -extensions v3_ca -days 365 -out imca.crt -in imca.csr 
+openssl req -new -sha1 -key private/cakey.pem -out imca.csr
+cp imca.csr ../CA/
+cd ../CA
+openssl ca -extensions v3_ca -days 365 -out imca.crt -in imca.csr -config openssl.cnf 
+ls
+cp imca.crt ../IMCA/
+ls
+cat cacert.pem > chain.crt
+rm chain.crt 
+cd ../IMCA/
+ls
+cat imca.crt
+cat imca.crt > chain.crt
+cat ../CA/cacert.pem >> chain.crt 
+openssl genrsa -out client.key 4096
+openssl req -new -key client.key -out client.csr
+openssl x509 -req -days 365 -in client.csr -CA imca.crt -CAkey  private/cakey.pem -set_serial 01 -out client.crt
+ls
+cat history > howwemade it
+ history > howwemade it
+history 
